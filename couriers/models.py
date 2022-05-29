@@ -6,3 +6,6 @@ class Courier(models.Model):
     address = models.TextField(blank=True)
     phone_number = models.TextField(blank=True)
 
+    def __str__(self):
+        return self.user.__str__()
+

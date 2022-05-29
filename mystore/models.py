@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
-from rocket_application.couriers.models import Courier
-from rocket_application.profiles.models import Customer
+from django.utils import timezone
 
 Status_choices = (
     ('not shipped', 'не доставлено'),
@@ -44,10 +42,14 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, related_name='orders', on_delete=models.CASCADE)
-    courier = models.ForeignKey(Courier, related_name='orders', on_delete=models.CASCADE)
-    pickup_location = models.CharField(db_index=True, max_length=255)
+    customer = models.ForeignKey('profiles.Customer', related_name='customer_orders', on_delete=models.CASCADE, default='1', blank=True)
+    courier = models.ForeignKey('couriers.Courier', related_name='courier_orders', on_delete=models.CASCADE, default='1', blank=True)
     destination = models.CharField(db_index=True, max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    requested_delivery_date = models.DateTimeField(blank=True, null=True)
     weight = models.IntegerField(db_index=True)
     status = models.CharField(max_length=255,choices=Status_choices, default='не доставлено')
-    order_item = models.ManyToManyField(Product)
+    # order_item = models.ManyToManyField(Product, blank=True, default='1')
+
+    def __str__(self):
+        return str(self.id)
